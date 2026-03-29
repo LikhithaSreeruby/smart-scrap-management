@@ -20,7 +20,14 @@ const getApiKey = () => {
   }
   
   // Safe logging for diagnostics
-  console.log(`Using Gemini API Key starting with: ${cleanedKey.substring(0, 4)}... (length: ${cleanedKey.length})`);
+  if (cleanedKey) {
+    console.log(`Gemini API Key detected: ${cleanedKey.substring(0, 4)}...${cleanedKey.substring(cleanedKey.length - 4)} (length: ${cleanedKey.length})`);
+    if (!cleanedKey.startsWith("AIza")) {
+      console.warn("Warning: The Gemini API Key does not start with 'AIza'. It might be incorrect.");
+    }
+  } else {
+    console.error("Gemini API Key is missing!");
+  }
   return cleanedKey;
 };
 
@@ -32,7 +39,7 @@ export async function detectScrap(base64Image: string) {
 
   // Create instance right before use to ensure latest key is used
   const ai = new GoogleGenAI({ apiKey });
-  const model = "gemini-1.5-flash-latest";
+  const model = "gemini-1.5-flash";
   
   // Extract mimeType from base64 string
   const mimeTypeMatch = base64Image.match(/^data:(image\/[a-zA-Z]+);base64,/);
@@ -52,7 +59,7 @@ export async function detectScrap(base64Image: string) {
               },
             },
             {
-              text: "Analyze this image of scrap material. Identify the type of material (e.g., Newspaper, Iron, Copper, PET Bottles, E-Waste, Cardboard, Glass) and estimate its weight in kg. If multiple items, list them. Return as JSON with an 'items' array containing objects with 'type', 'estimated_weight_kg', and 'confidence'.",
+              text: "Analyze this image of scrap material. Identify the type of material from this list: [Newspaper, Iron, Copper, PET Bottles, E-Waste, Cardboard, Glass]. Estimate its weight in kg. If multiple items, list them. Return as JSON with an 'items' array containing objects with 'type', 'estimated_weight_kg', and 'confidence'.",
             },
           ],
         },
