@@ -1,0 +1,8 @@
+{
+  "name": "was2weal",
+  "description": "A revolutionary scrap collection app connecting households with verified collectors to promote sustainable waste management.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Stores user and collector profile information.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "role": { "type": "string", "enum": ["user", "collector", "admin"] },
+        "phone": { "type": "string" },
+        "rating": { "type": "number" },
+        "total_earned": { "type": "number" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "verified": { "type": "boolean" }
+      },
+      "required": ["uid", "role", "phone"]
+    },
+    "ScrapRequest": {
+      "title": "Scrap Request",
+      "description": "Stores scrap collection requests.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "user_id": { "type": "string" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string" },
+              "weight_kg": { "type": "number" },
+              "estimated_price": { "type": "number" }
+            }
+          }
+        },
+        "total_estimated_price": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "accepted", "picked", "paid", "cancelled"] },
+        "collector_id": { "type": "string" },
+        "created_at": { "type": "number" },
+        "address": { "type": "string" },
+        "otp": { "type": "string" }
+      },
+      "required": ["user_id", "items", "status", "address"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile documents."
+    },
+    "/requests/{requestId}": {
+      "schema": "ScrapRequest",
+      "description": "Scrap collection request documents."
+    }
+  }
+}

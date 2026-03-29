@@ -1,11 +1,72 @@
-<div align="center">
+# was2weal (formerly RecycIQ) ♻️
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+**was2weal** is a revolutionary scrap collection platform designed to bridge the gap between households and verified scrap collectors. Our mission is to promote sustainable waste management by making recycling easy, rewarding, and transparent.
 
-  <h1>Built with AI Studio</h2>
+## 🚀 Features
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+### For Users
+- **AI-Powered Scrap Detection**: Take a photo of your scrap, and our Gemini AI will identify the material and estimate its weight.
+- **Real-time Price Estimation**: Get instant value estimates based on current market rates.
+- **Eco-Impact Dashboard**: Track your contribution to the environment (CO2 saved, trees saved, waste diverted).
+- **Verified Pickups**: Schedule pickups with verified collectors and verify them via a secure OTP.
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+### For Collectors
+- **Smart Request Management**: View and accept pending scrap collection requests in your area.
+- **Optimized Routes**: (Planned) Integration with maps for efficient collection routes.
+- **Secure Verification**: Verify pickups using user-provided OTPs to ensure trust and safety.
+- **Earnings Tracker**: Monitor your earnings and collection history.
 
-</div>
+## 🛠️ Tech Stack
+
+- **Frontend**: React 19, TypeScript, Vite
+- **Styling**: Tailwind CSS 4
+- **Animations**: Motion (formerly Framer Motion)
+- **Backend**: Firebase (Authentication & Firestore)
+- **AI**: Google Gemini 3 Flash (via `@google/genai`)
+- **Icons**: Lucide React
+
+## 📦 Installation & Setup
+
+1. **Clone the repository**:
+   ```bash
+   git clone <repository-url>
+   cd was2weal
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Configure Environment Variables**:
+   Create a `.env` file (or use the Secrets panel in AI Studio) and add:
+   - `GEMINI_API_KEY`: Your Google Gemini API key.
+   - `APP_URL`: The URL where the app is hosted.
+
+4. **Firebase Configuration**:
+   The app expects a `firebase-applet-config.json` in the root directory with your Firebase project credentials.
+
+5. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
+
+## 🛡️ Security Rules
+
+The project uses Firestore Security Rules to ensure:
+- Users can only access their own data.
+- Collectors can only update requests they have accepted.
+- Admins have full oversight.
+- Strict data validation on all writes.
+
+## 🌍 Environmental Impact
+
+We use the following factors to calculate your impact:
+- **Iron**: 1.5kg CO2 saved per kg
+- **Plastic**: 2.5kg CO2 saved per kg
+- **Paper**: 1.0kg CO2 saved per kg
+- **Copper**: 4.0kg CO2 saved per kg
+
+---
+
+Built with ❤️ for a greener planet.
