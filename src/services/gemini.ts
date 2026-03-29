@@ -1,21 +1,33 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
 const getApiKey = () => {
-  const key = import.meta.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
-  if (!key) {
-    console.warn("GEMINI_API_KEY is not set. AI detection will fail.");
+  // Try multiple sources
+  const key = import.meta.env.VITE_GEMINI_API_KEY || 
+              (typeof process !== 'undefined' && process.env ? process.env.GEMINI_API_KEY : "");
+  
+  // Filter out common "invalid" strings that might be injected by build tools
+  if (!key || 
+      key === "undefined" || 
+      key === "null" || 
+      key === "[object Object]" ||
+      key.trim() === "") {
+    console.warn("GEMINI_API_KEY is not set or is invalid. AI detection will fail.");
+    return "";
   }
-  return key || "";
+  
+  // Safe logging for diagnostics
+  console.log(`Using Gemini API Key starting with: ${key.substring(0, 4)}... (length: ${key.length})`);
+  return key;
 };
-
-const ai = new GoogleGenAI({ apiKey: getApiKey() });
 
 export async function detectScrap(base64Image: string) {
   const apiKey = getApiKey();
   if (!apiKey) {
-    throw new Error("AI API Key is missing. Please configure GEMINI_API_KEY.");
+    throw new Error("AI API Key is missing. Please configure GEMINI_API_KEY in your Secrets or .env file.");
   }
 
+  // Create instance right before use to ensure latest key is used
+  const ai = new GoogleGenAI({ apiKey });
   const model = "gemini-3-flash-preview";
   
   // Extract mimeType from base64 string
@@ -70,8 +82,8 @@ export async function detectScrap(base64Image: string) {
     return JSON.parse(response.text);
   } catch (error: any) {
     console.error("Gemini API Error:", error);
-    if (error.message?.includes("API key not valid")) {
-      throw new Error("Invalid Gemini API Key. Please check your configuration.");
+    if (error.message?.includes("API key not valid") || error.message?.includes("invalid API key")) {
+      throw new Error("Invalid Gemini API Key. Please ensure you have a valid key from Google AI Studio in your Secrets.");
     }
     throw error;
   }

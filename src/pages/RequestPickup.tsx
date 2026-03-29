@@ -51,7 +51,10 @@ export function RequestPickup() {
       toast.success("AI detected scrap materials!");
     } catch (error: any) {
       console.error(error);
-      const message = error.message || "Failed to detect scrap. Please add manually.";
+      let message = error.message || "Failed to detect scrap. Please add manually.";
+      if (message.includes("Invalid Gemini API Key")) {
+        message = "The Gemini API Key is invalid. Please check your Secrets or .env file.";
+      }
       toast.error(message);
       // Fallback: Add a default item so user can edit it
       if (items.length === 0) {
