@@ -1,5 +1,7 @@
 # was2weal (formerly RecycIQ) ♻️
 
+**Access the App**: [https://ais-dev-vtm25e6eu7lyos4uexajvw-140176589310.asia-east1.run.app](https://ais-dev-vtm25e6eu7lyos4uexajvw-140176589310.asia-east1.run.app)
+
 **was2weal** is a revolutionary scrap collection platform designed to bridge the gap between households and verified scrap collectors. Our mission is to promote sustainable waste management by making recycling easy, rewarding, and transparent.
 
 ## 🚀 Features
