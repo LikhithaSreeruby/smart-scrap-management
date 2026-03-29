@@ -49,12 +49,50 @@ export function RequestPickup() {
       });
       setItems(detectedItems);
       toast.success("AI detected scrap materials!");
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error("Failed to detect scrap. Please add manually.");
+      const message = error.message || "Failed to detect scrap. Please add manually.";
+      toast.error(message);
+      // Fallback: Add a default item so user can edit it
+      if (items.length === 0) {
+        setItems([{
+          type: SCRAP_RATES[0].type,
+          estimated_weight_kg: 1,
+          estimated_price: SCRAP_RATES[0].rate,
+          icon: SCRAP_RATES[0].icon
+        }]);
+      }
     } finally {
       setDetecting(false);
     }
+  };
+
+  const addItem = () => {
+    const defaultRate = SCRAP_RATES[0];
+    setItems([...items, {
+      type: defaultRate.type,
+      estimated_weight_kg: 1,
+      estimated_price: defaultRate.rate,
+      icon: defaultRate.icon
+    }]);
+  };
+
+  const updateItem = (index: number, field: string, value: any) => {
+    const newItems = [...items];
+    const item = { ...newItems[index], [field]: value };
+    
+    if (field === 'type' || field === 'estimated_weight_kg') {
+      const rate = SCRAP_RATES.find(r => r.type === (field === 'type' ? value : item.type)) || SCRAP_RATES[0];
+      item.estimated_price = Math.round(item.estimated_weight_kg * rate.rate);
+      item.icon = rate.icon;
+    }
+    
+    newItems[index] = item;
+    setItems(newItems);
+  };
+
+  const removeItem = (index: number) => {
+    setItems(items.filter((_, i) => i !== index));
   };
 
   const totalEstimated = items.reduce((sum, item) => sum + item.estimated_price, 0);
@@ -145,23 +183,58 @@ export function RequestPickup() {
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       key={i} 
-                      className="flex items-center justify-between p-4 rounded-xl bg-zinc-50 border border-zinc-100"
+                      className="p-4 rounded-xl bg-zinc-50 border border-zinc-100 space-y-3"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center text-emerald-600 shadow-sm">
-                          <Sparkles size={18} />
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center text-emerald-600 shadow-sm">
+                            <Sparkles size={18} />
+                          </div>
+                          <select 
+                            value={item.type}
+                            onChange={(e) => updateItem(i, 'type', e.target.value)}
+                            className="font-bold bg-transparent outline-none cursor-pointer"
+                          >
+                            {SCRAP_RATES.map(r => (
+                              <option key={r.type} value={r.type}>{r.type}</option>
+                            ))}
+                          </select>
                         </div>
-                        <div>
-                          <p className="font-bold">{item.type}</p>
-                          <p className="text-xs text-zinc-500">Estimated {item.estimated_weight_kg}kg</p>
-                        </div>
+                        <button 
+                          onClick={() => removeItem(i)}
+                          className="text-zinc-400 hover:text-red-500 transition-colors"
+                        >
+                          <Trash2 size={16} />
+                        </button>
                       </div>
-                      <div className="text-right">
-                        <p className="font-bold text-emerald-600">₹{item.estimated_price}</p>
-                        <p className="text-[10px] text-zinc-400 uppercase tracking-wider">Est. Value</p>
+                      
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-2 flex-1">
+                          <input 
+                            type="number" 
+                            value={item.estimated_weight_kg}
+                            onChange={(e) => updateItem(i, 'estimated_weight_kg', parseFloat(e.target.value) || 0)}
+                            className="w-20 px-2 py-1 rounded-lg border border-zinc-200 text-sm"
+                            step="0.1"
+                            min="0.1"
+                          />
+                          <span className="text-sm text-zinc-500">kg</span>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-emerald-600">₹{item.estimated_price}</p>
+                          <p className="text-[10px] text-zinc-400 uppercase tracking-wider">Est. Value</p>
+                        </div>
                       </div>
                     </motion.div>
                   ))}
+                  
+                  <Button 
+                    variant="outline" 
+                    className="w-full border-dashed" 
+                    onClick={addItem}
+                  >
+                    + Add Item Manually
+                  </Button>
                   
                   {items.length > 0 && (
                     <div className="pt-4 flex items-center justify-between border-t border-zinc-100">
