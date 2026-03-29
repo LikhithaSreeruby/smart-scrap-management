@@ -53,6 +53,17 @@
    npm run dev
    ```
 
+## 🛡️ Security & Environment Variables
+
+To prevent sensitive information from being leaked to GitHub:
+1.  **`.gitignore`**: `firebase-applet-config.json` and `.env` files are now ignored.
+2.  **Environment Variables**: Use the variables defined in `.env.example` to configure your app in production or on GitHub.
+3.  **Fixing a Leak**: If you have already committed `firebase-applet-config.json` to GitHub:
+    -   Remove it from your repository: `git rm --cached firebase-applet-config.json`
+    -   Commit the change: `git commit -m "Remove sensitive config from tracking"`
+    -   Push to GitHub: `git push origin main`
+    -   **Rotate your API keys** in the Google Cloud Console if they were publicly exposed.
+
 ## 🛡️ Security Rules
 
 The project uses Firestore Security Rules to ensure:
