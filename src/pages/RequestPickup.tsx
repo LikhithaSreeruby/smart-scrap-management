@@ -59,10 +59,10 @@ export function RequestPickup() {
       // Fallback: Add a default item so user can edit it
       if (items.length === 0) {
         setItems([{
-          type: SCRAP_RATES[0].type,
+          type: "Unidentified",
           estimated_weight_kg: 1,
-          estimated_price: SCRAP_RATES[0].rate,
-          icon: SCRAP_RATES[0].icon
+          estimated_price: 0,
+          icon: "help-circle"
         }]);
       }
     } finally {
