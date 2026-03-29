@@ -2,8 +2,9 @@ import { GoogleGenAI, Type } from "@google/genai";
 
 const getApiKey = () => {
   // Try multiple sources in order of preference
-  const key = (typeof process !== 'undefined' && process.env ? process.env.GEMINI_API_KEY : "") ||
-              import.meta.env.VITE_GEMINI_API_KEY ||
+  // Use a direct string check first as Vite will replace these
+  const key = import.meta.env.VITE_GEMINI_API_KEY || 
+              (typeof process !== 'undefined' && process.env ? process.env.GEMINI_API_KEY : "") ||
               "";
   
   // Clean the key (remove quotes, whitespace, and check for common placeholders)
@@ -14,8 +15,10 @@ const getApiKey = () => {
       cleanedKey === "undefined" || 
       cleanedKey === "null" || 
       cleanedKey === "[object Object]" ||
-      cleanedKey === "TODO_KEYHERE") {
-    console.warn("GEMINI_API_KEY is not set or is invalid. AI detection will fail.");
+      cleanedKey === "TODO_KEYHERE" ||
+      cleanedKey === "MY_GEMINI_API_KEY" ||
+      cleanedKey.includes("YOUR_API_KEY")) {
+    console.warn("GEMINI_API_KEY is not set or is a placeholder. AI detection will fail.");
     return "";
   }
   
@@ -39,7 +42,7 @@ export async function detectScrap(base64Image: string) {
 
   // Create instance right before use to ensure latest key is used
   const ai = new GoogleGenAI({ apiKey });
-  const model = "gemini-1.5-flash";
+  const model = "gemini-3-flash-preview";
   
   // Extract mimeType from base64 string
   const mimeTypeMatch = base64Image.match(/^data:(image\/[a-zA-Z]+);base64,/);
@@ -94,7 +97,9 @@ export async function detectScrap(base64Image: string) {
   } catch (error: any) {
     console.error("Gemini API Error:", error);
     if (error.message?.includes("API key not valid") || error.message?.includes("invalid API key")) {
-      throw new Error("Invalid Gemini API Key. Please ensure you have a valid key from Google AI Studio in your Secrets.");
+      const apiKey = getApiKey();
+      const keySnippet = apiKey ? `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}` : "None";
+      throw new Error(`Invalid Gemini API Key (${keySnippet}). Please ensure you have a valid key from Google AI Studio in your Secrets.`);
     }
     throw error;
   }
