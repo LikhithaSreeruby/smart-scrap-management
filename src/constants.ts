@@ -1,6 +1,7 @@
 import { ScrapRate } from "./types";
 
 export const SCRAP_RATES: ScrapRate[] = [
+  { type: "Unidentified", unit: "kg", rate: 0, icon: "HelpCircle", co2_saving_per_kg: 0 },
   { type: "Newspaper", unit: "kg", rate: 14, icon: "Newspaper", co2_saving_per_kg: 1.5 },
   { type: "Iron", unit: "kg", rate: 28, icon: "Hammer", co2_saving_per_kg: 2.0 },
   { type: "Copper", unit: "kg", rate: 600, icon: "Zap", co2_saving_per_kg: 3.5 },

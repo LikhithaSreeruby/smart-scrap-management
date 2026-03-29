@@ -1,23 +1,27 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
 const getApiKey = () => {
-  // Try multiple sources
-  const key = import.meta.env.VITE_GEMINI_API_KEY || 
-              (typeof process !== 'undefined' && process.env ? process.env.GEMINI_API_KEY : "");
+  // Try multiple sources in order of preference
+  const key = (typeof process !== 'undefined' && process.env ? process.env.GEMINI_API_KEY : "") ||
+              import.meta.env.VITE_GEMINI_API_KEY ||
+              "";
+  
+  // Clean the key (remove quotes, whitespace, and check for common placeholders)
+  const cleanedKey = key.replace(/['"]/g, '').trim();
   
   // Filter out common "invalid" strings that might be injected by build tools
-  if (!key || 
-      key === "undefined" || 
-      key === "null" || 
-      key === "[object Object]" ||
-      key.trim() === "") {
+  if (!cleanedKey || 
+      cleanedKey === "undefined" || 
+      cleanedKey === "null" || 
+      cleanedKey === "[object Object]" ||
+      cleanedKey === "TODO_KEYHERE") {
     console.warn("GEMINI_API_KEY is not set or is invalid. AI detection will fail.");
     return "";
   }
   
   // Safe logging for diagnostics
-  console.log(`Using Gemini API Key starting with: ${key.substring(0, 4)}... (length: ${key.length})`);
-  return key;
+  console.log(`Using Gemini API Key starting with: ${cleanedKey.substring(0, 4)}... (length: ${cleanedKey.length})`);
+  return cleanedKey;
 };
 
 export async function detectScrap(base64Image: string) {

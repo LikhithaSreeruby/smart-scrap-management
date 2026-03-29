@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Camera, Upload, Trash2, Sparkles, Loader2, CheckCircle2, MapPin, Calendar } from "lucide-react";
+import { Camera, Upload, Trash2, Sparkles, Loader2, CheckCircle2, MapPin, Calendar, Newspaper, Hammer, Zap, Box, Droplets, Cpu, Package, HelpCircle } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { Navbar } from "../components/Navbar";
@@ -58,11 +58,12 @@ export function RequestPickup() {
       toast.error(message);
       // Fallback: Add a default item so user can edit it
       if (items.length === 0) {
+        const unidentifiedRate = SCRAP_RATES[0]; // Now "Unidentified"
         setItems([{
-          type: "Unidentified",
+          type: unidentifiedRate.type,
           estimated_weight_kg: 1,
-          estimated_price: 0,
-          icon: "help-circle"
+          estimated_price: unidentifiedRate.rate,
+          icon: unidentifiedRate.icon
         }]);
       }
     } finally {
@@ -71,7 +72,7 @@ export function RequestPickup() {
   };
 
   const addItem = () => {
-    const defaultRate = SCRAP_RATES[0];
+    const defaultRate = SCRAP_RATES[0]; // Now "Unidentified"
     setItems([...items, {
       type: defaultRate.type,
       estimated_weight_kg: 1,
@@ -191,7 +192,13 @@ export function RequestPickup() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center text-emerald-600 shadow-sm">
-                            <Sparkles size={18} />
+                            {(() => {
+                              const IconMap: any = {
+                                Newspaper, Hammer, Zap, Box, Droplets, Cpu, Package, HelpCircle, Sparkles
+                              };
+                              const Icon = IconMap[item.icon] || Sparkles;
+                              return <Icon size={18} />;
+                            })()}
                           </div>
                           <select 
                             value={item.type}
