@@ -19,21 +19,8 @@ export function RequestPickup() {
   const [address, setAddress] = useState("");
   const [date, setDate] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [keyStatus, setKeyStatus] = useState<{ detected: boolean, snippet: string }>({ detected: false, snippet: "" });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
-
-  React.useEffect(() => {
-    // Check key status on mount
-    const key = import.meta.env.VITE_GEMINI_API_KEY || "";
-    const cleaned = key.replace(/['"]/g, '').trim();
-    const isPlaceholder = cleaned === "TODO_KEYHERE" || cleaned === "MY_GEMINI_API_KEY" || cleaned.includes("YOUR_API_KEY");
-    const isDetected = !!cleaned && cleaned !== "undefined" && !isPlaceholder;
-    setKeyStatus({
-      detected: isDetected,
-      snippet: isDetected ? `${cleaned.substring(0, 4)}...${cleaned.substring(cleaned.length - 4)}` : (isPlaceholder ? cleaned : "None")
-    });
-  }, []);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -143,63 +130,10 @@ export function RequestPickup() {
     <div className="pb-32 pt-8 px-6 max-w-2xl mx-auto">
       <Navbar />
       
-      <div className="mb-8 flex items-start justify-between">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Schedule Pickup</h1>
-          <p className="text-zinc-500">Snap a photo of your scrap and we'll do the rest.</p>
-        </div>
-        <div className={cn(
-          "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5",
-          keyStatus.detected ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"
-        )}>
-          <div className={cn("w-1.5 h-1.5 rounded-full", keyStatus.detected ? "bg-emerald-500" : "bg-red-500")} />
-          AI {keyStatus.detected ? "Ready" : "Key Missing"}
-        </div>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">Schedule Pickup</h1>
+        <p className="text-zinc-500">Snap a photo of your scrap and we'll do the rest.</p>
       </div>
-
-      {!keyStatus.detected && (
-        <Card className="mb-6 border-red-200 bg-red-50/50">
-          <div className="flex gap-3">
-            <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 shrink-0">
-              <HelpCircle size={20} />
-            </div>
-            <div className="space-y-1">
-              <p className="font-bold text-red-900">Gemini API Key Required</p>
-              <p className="text-sm text-red-700">
-                {keyStatus.snippet.includes("MY_GEMINI") || keyStatus.snippet.includes("TODO") ? (
-                  <>
-                    Your key is set to a <strong>placeholder</strong> (<code>{keyStatus.snippet}</code>). 
-                    Please replace it with a real key from Google AI Studio.
-                  </>
-                ) : (
-                  <>
-                    To use AI detection, you must add your <strong>GEMINI_API_KEY</strong> in the 
-                    <strong> Settings &gt; Secrets</strong> menu in AI Studio.
-                  </>
-                )}
-              </p>
-              <div className="pt-2 flex gap-2">
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  className="bg-white border-red-200 text-red-700 hover:bg-red-50"
-                  onClick={() => window.location.reload()}
-                >
-                  I've added it, refresh
-                </Button>
-                <a 
-                  href="https://aistudio.google.com/app/apikey" 
-                  target="_blank" 
-                  rel="noreferrer"
-                  className="text-xs text-red-600 underline flex items-center gap-1 px-2"
-                >
-                  Get a free key <Sparkles size={10} />
-                </a>
-              </div>
-            </div>
-          </div>
-        </Card>
-      )}
 
       <div className="space-y-6">
         {/* Step 1: Photo & Detection */}
